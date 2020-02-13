@@ -1,0 +1,102 @@
+Now let's explore our changes and learn about the indexes, commits and trees:
+https://git-scm.com/book/en/v2/Git-Branching-Branches-in-a-Nutshell
+
+Every commit has a tree and you can explore the differences between any two trees
+We have two different trees saved at the moment
+	The tree from the initial commit
+	The working tree, which is saved in both the staging area and with the most recent commit
+We can compare the working tree to commits like so:
+git diff HEAD~1		This shows our most recent changes
+git diff HEAD		This doesn't show anything because our working tree and our HEAD is the same
+git diff HEAD~1 HEAD	We can also specify two trees, and it'll tell us the difference
+
+
+So now, let's mess with the trees a bit
+Resetting removes the last commit but not the files
+ls
+git log
+git reset HEAD~1 	**changes things**
+git log			The most recent commit is missing
+ls			But the file we previously added is still there
+git status		We can see that the file is just "untracked"
+git diff HEAD		Does nothing because the changes that we have are "untracked" aka they're not in the index
+
+There is a special index that keeps track of the files you're currently working on. 
+We normally call this "the staging area" or "the git index"
+Each tree is a list of the files that git is currently tracking AND a hash/copy of their state
+	Each commit has an associated tree
+	Git saves a special tree that is converted into a commit when running "git commit"
+
+
+
+So, now let's update the index
+git add bjthaye2.txt	**changes things (file now being tracked, and the current version is saved in the index)**
+git status		You can see the changes are "to be committed"
+git diff HEAD		This does something now, git cares about the file now and shows the differences to the working tree
+git log			Git add doesn't create any commits
+git rev-parse HEAD	This is HEAD's current hash, it is the most recent commit
+
+git commit -m "Added secret message"	**changes things**
+git log			We have a new most recent commit
+git status		There are no more changes "to be committed", we committed them all.
+git rev-parse HEAD	HEAD is pointing to a new hash, the most recent commit
+ls			Files are still there
+git diff HEAD 		HEAD is now updated to match the index/working tree, so we don't see any differences
+git diff HEAD~1 	Shows the changes we just made
+
+"master" and "HEAD~1" are currently the same
+git log			look how master is the same as "1 commit ago"
+git rev-parse HEAD~1
+git rev-parse master	The commit hashes are the same
+git diff HEAD~1		Look at the differences
+git diff HEAD~1 > a	Save differences in a file **changes things (the working tree only, not the index)**
+git diff master		These differences are the same
+git diff master > b	Save differences in a file **changes things (the working tree only, not the index)**
+diff a b 		Prove that things are the same
+rm a b			**removes files from working tree
+
+
+
+git ls-files		Shows files in the index
+ls			Two files
+git log			Two commits
+git status		Index and working tree are the same
+
+git reset HEAD~1	**changes things (this branch now points to previous commit, files stay the same)**
+ls			Two files
+git log			One commit
+git status		Index and working tree are different, index matches previous commit
+
+rm bjthaye2.txt		**changes things (the working tree now matches the previous commit's tree)**
+ls			One file
+git log			One commit
+git status		Index and working tree are now the same as previous commit's tree
+
+touch bjthaye2.txt	**changes things**
+git log			
+git status
+
+git add bjthaye2.txt	**changes things**
+git diff HEAD 		shows a new file
+
+vi bjthaye2.txt		**changes things **
+git diff HEAD		now we see these new changes
+git diff		there are changes with the index finally
+
+git add bjthaye2.txt	**changes things (staging area now contains changes)**
+git diff		the index has now been updated
+git diff HEAD		but there are still changes when compared to the last commit
+
+git diff HEAD > a	**changes things (stores diff of working tree and tree at HEAD~1)**
+git rev-parse HEAD
+git log
+
+git commit -m "Added a secret message"	**changes things (creates a new commit with the tree in the index, not the working tree)**
+git rev-parse HEAD~1
+git log
+git diff HEAD~1
+git diff HEAD~1 > b	**changes things (stores diff of tracked files in the working tree and the tree at HEAD~1)**
+diff a b
+rm a b			**changes things (removes the files we created)**
+git rev-parse HEAD	is now the new commit
+
